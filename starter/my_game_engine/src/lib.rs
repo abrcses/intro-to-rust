@@ -94,17 +94,97 @@ mod ffi {
     }
 }
 
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
-
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::ffi::*;
+    use core::time;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+    #[ignore]
+    fn test_simple_game_loop() {
+        println!("test_simple_game_loop");
+        rust_create_game_window("Test title", 800, 600);
+        while !rust_window_should_close() {
+            rust_update_game_window();
+            std::thread::sleep(time::Duration::from_millis(20));
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_sprite_rendering() {
+        rust_create_game_window("Test sprite rendering", 800, 600);
+        let sprite = rust_create_sprite(80.0, 20.0, 200, 100, 255, 0, 0);
+        rust_render_sprite(sprite);
+        while !rust_window_should_close() {
+            rust_update_game_window();
+            std::thread::sleep(time::Duration::from_millis(20));
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_screen_clearing() {
+        rust_create_game_window("Test screen clearing", 800, 600);
+        let sprite = rust_create_sprite(80.0, 20.0, 200, 100, 255, 0, 0);
+        rust_render_sprite(sprite);
+        rust_update_game_window();
+        std::thread::sleep(time::Duration::from_secs(5));
+        let sprite = rust_create_sprite(280.0, 220.0, 100, 200, 0, 255, 0);
+        rust_clear_screen();
+        rust_render_sprite(sprite);
+        while !rust_window_should_close() {
+            rust_update_game_window();
+            std::thread::sleep(time::Duration::from_millis(20));
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_key_presses() {
+        rust_create_game_window("Test key presses", 800, 600);
+        let left_sprite = rust_create_sprite(20.0, 220.0, 100, 100, 255, 0, 0);
+        let up_sprite = rust_create_sprite(370.0, 20.0, 100, 100, 255, 0, 0);
+        let right_sprite = rust_create_sprite(640.0, 220.0, 100, 100, 255, 0, 0);
+        let down_sprite = rust_create_sprite(370.0, 480.0, 100, 100, 255, 0, 0);
+        let space_sprite = rust_create_sprite(200.0, 280.0, 400, 70, 255, 0, 0);
+
+        while !rust_window_should_close() {
+            rust_clear_screen();
+            if rust_get_key(GLFW_KEY_LEFT) == GLFW_PRESS {
+                rust_render_sprite(left_sprite);
+            } else if rust_get_key(GLFW_KEY_UP) == GLFW_PRESS {
+                rust_render_sprite(up_sprite);
+            } else if rust_get_key(GLFW_KEY_RIGHT) == GLFW_PRESS {
+                rust_render_sprite(right_sprite);
+            } else if rust_get_key(GLFW_KEY_DOWN) == GLFW_PRESS {
+                rust_render_sprite(down_sprite);
+            } else if rust_get_key(GLFW_KEY_SPACE) == GLFW_PRESS {
+                rust_render_sprite(space_sprite);
+            }
+
+            rust_update_game_window();
+            std::thread::sleep(time::Duration::from_millis(20));
+        }
+    }
+
+    #[test]
+    #[ignore]
+    fn test_sprite_position_update() {
+        rust_create_game_window("Test sprite position update", 800, 600);
+        let mut x = 20.0;
+        let y = 200.0;
+        let sprite = rust_create_sprite(x, y, 100, 100, 255, 0, 0);
+        rust_render_sprite(sprite);
+        while !rust_window_should_close() {
+            rust_clear_screen();
+            if x < 640.0 {
+                x += 2.0;
+                rust_update_sprite_position(sprite, x, y);
+            }
+            rust_render_sprite(sprite);
+            rust_update_game_window();
+            std::thread::sleep(time::Duration::from_millis(20));
+        }
     }
 }
