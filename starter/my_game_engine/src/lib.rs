@@ -1,4 +1,4 @@
-mod ffi {
+pub mod ffi {
     use std::ffi::{c_char, c_int, c_void};
 
     pub const GLFW_PRESS: c_int = 1;
